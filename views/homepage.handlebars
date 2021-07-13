@@ -10,14 +10,19 @@
   <div class="col-md-6">
     <h3>Add Ingredients:</h3>
 
-    <form class="form new-recipe-form">
+    <form id="search-form" class="form new-recipe-form">
       <div class="form-group">
         <label for="ingredient-name">Ingredient:</label>
         <input class="form-input" type="text" id="ingredient-name" name="ingredient-name" />
-        <button id='addbtn'>Add Ingredient</button>
       </div>
     </form>
   </div>
+  <div id="app"></div>
+  <div class="ingredient-list">
+    {{#each items}}
+    {{dataValues.name}}
+      {{/each}}
+      </div>
   <h3>Look for a recipe:</h3>
 
     <form class="form new-recipe-form">
@@ -52,6 +57,7 @@
     {{/each}}
   </div>
   {{/if}} --}}
+
 </div>
 
 <script src="./js/homepage.js"></script>
