@@ -1,7 +1,6 @@
 // var mark = require('dotenv').config()
 // const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY;
 var searchFormEl = document.querySelector("#search-form");
-var searchInputVal = document.querySelector(".form-input");
 var searchBtn = document.querySelector('#add-ingredient');
 var recipeBtn = document.querySelector('#searchRecipeBtn');
 // var searchInputVal = document.querySelector(".form-input");
