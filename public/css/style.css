@@ -356,8 +356,8 @@ span {
 }
 .box1 {
   position: absolute;
-  top: 5%;
-  left: 50%;
+  top: 12%;
+  left: 44%;
   transform: translate(-50%, -50%);
 }
 
@@ -412,6 +412,17 @@ i {
 /* ========================== */
 /* =====Search Bar====== */
 /* ========================== */
+
+#search-form {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.form-group {
+  display: flex;
+}
+
 .click-info {
   display: none;
   text-align: center;

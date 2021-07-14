@@ -108,9 +108,9 @@ const runApiQueries = async (search) => {
           <form  class="form w-100">
           <button id="${index}-${ingredient.name}" class="btn btn-outline-success" type="submit">Add</button>
           </form>
-        </div>
-        </div>
-        </div>
+          </div>
+          </div>
+      </div>
     `;
 
     const items = [];
