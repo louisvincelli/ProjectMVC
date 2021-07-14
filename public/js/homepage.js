@@ -2,11 +2,13 @@
 // const RAPIDAPI_KEY = process.env.VITE_RAPIDAPI_KEY;
 var searchFormEl = document.querySelector("#search-form");
 var searchInputVal = document.querySelector(".form-input");
+var searchBtn = document.querySelector('#add-ingredient');
+var recipeBtn = document.querySelector('#searchRecipeBtn');
+// var searchInputVal = document.querySelector(".form-input");
 const RAPIDAPI_KEY = "b991af6626msh20817527d58c008p114012jsnafbe85f9a112";
-
-const INGRD_URL =
-  "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/food/ingredients/autocomplete?query=";
-//const INGRD2RECIPES_URL = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients?ingredients=apples%2Cflour%2Csugar&number=5&ignorePantry=true&ranking=1"
+var pantry = []
+const INGRD_URL = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/food/ingredients/autocomplete?query=";
+const INGRD2RECIPES_URL = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients?ingredients=apples%2Cflour%2Csugar&number=5&ignorePantry=true&ranking=1"
 const SPOON_HOST = "spoonacular-recipe-food-nutrition-v1.p.rapidapi.com";
 
 const getData = async (url, host) => {
@@ -25,6 +27,7 @@ const getData = async (url, host) => {
   // Response
   return await response.json();
 };
+
 //  Search Form Element specialized for ingredient input | Combines the search query with the API url
 async function handleSearchFormSubmit(event) {
   event.preventDefault();
@@ -38,6 +41,62 @@ async function handleSearchFormSubmit(event) {
   ingrdUrl = INGRD_URL + searchInputVal + "&number=4";
   console.log(ingrdUrl);
   return ingrdUrl;
+};
+
+// SAVE INGREDIENT INPUT QUERY | Saves to a pantry variable
+async function appendPantry(event) {
+  event.preventDefault();
+  // alert("handle form submit")
+  var searchInputVal = document.querySelector(".form-input").value;
+  if (!searchInputVal) {
+    console.error("You need a search input value!");
+    return;
+  }
+  console.log(`Appending (${searchInputVal}) to pantry`)
+  // Takes the search query 
+  // pantry.push(searchInputVal+"%2C");
+  pantry.push(searchInputVal);
+  console.log(`Pantry items are:${pantry}`);
+  localStorage.setItem("pantry",pantry)
+  return pantry;
+}
+
+// SEARCH FOR RECIPES
+async function searchRecipes(event) {
+  event.preventDefault();
+  console.log("+++++");
+
+  let app = document.querySelector("#app");
+  // // GET USER QUERIED INGREDIENTS
+  urlString = localStorage.getItem("pantry").split("&")
+  console.log(`ingredients string is: ${urlString}`)
+  console.log("+++++");
+  RECIPE_URL = "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients?ingredients=" + urlString + "&number=5&ignorePantry=true&ranking=1"
+  console.log(RECIPE_URL);
+
+  const recipesObj = await getData(RECIPE_URL, SPOON_HOST);
+  console.log(recipesObj);
+
+  // Erases search results after each user query below search bar
+  app.innerHTML = "";
+  // UPDATE UI WITH INGREDIENT IMG & NAME DATA
+  recipesObj.forEach((recipe,index) => {
+    let img = recipe.image;
+    app.innerHTML += `<div class="flex-row align-center justify-center min-100-vh bg-primary">
+        <div class="col-12 col-md-9 flex-column align-center bg-light p-5">
+          <h1 class="text-primary"> ${recipe.title}</h1>
+            <img
+            class="h-auto w-48 flex-none rounded-l object-cover"
+            src=${img}
+            alt="Image Description"
+            />
+          <form  class="form w-100">
+          <button id="${index}-${recipe.title}" class="btn btn-outline-success" type="submit">Add</button>
+          </form>
+          
+        </div>
+       
+      </div>`});
 }
 
 const runApiQueries = async (search) => {
@@ -48,26 +107,27 @@ const runApiQueries = async (search) => {
   // // GET INGREDIENT SETS
   const ingredientList = await getData(a, SPOON_HOST);
   console.log(ingredientList);
-  if (ingredientList > 0) {
-    const response = await fetch(`/api/items`, {
-      method: "POST",
-      body: JSON.stringify({ ingredientList }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  }
 
-  let matches = ingredientList.filter((ingredent) => {
-    const regex = new RegExp(`^${search}`, "gi");
-    return ingredent.name.match(regex);
-  });
-  console.log(matches);
+  // if (ingredientList > 0) {
+  //   const response = await fetch(`/api/items`, {
+  //     method: "POST",
+  //     body: JSON.stringify({ ingredientList }),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  // }
 
-  if (search.length === 0) {
-    matches = [];
-    matchList.innerHTML = "";
-  }
+  // let matches = ingredientList.filter((ingredent) => {
+  //   const regex = new RegExp(`^${search}`, "gi");
+  //   return ingredent.name.match(regex);
+  // });
+  // console.log(matches);
+
+  // if (search.length === 0) {
+  //   matches = [];
+  //   matchList.innerHTML = "";
+  // }
 
   // Erases search results after each user query below search bar
   app.innerHTML = "";
@@ -89,20 +149,20 @@ const runApiQueries = async (search) => {
         </div>
        
       </div>`;
-    const addBtn = document.getElementById(`${index}-${ingredient.name}`);
-    addBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log(event);
+    // const addBtn = document.getElementById(`${index}-${ingredient.name}`);
+    // addBtn.addEventListener("click", (event) => {
+    //   event.preventDefault();
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log(event);
 
-      test(event);
-    });
+    //   test(event);
+    // });
   });
 };
 
@@ -163,7 +223,13 @@ document.querySelector(".form").addEventListener("submit", (e) => {
 //     `;
 // });
 
-searchInputVal.addEventListener("input", runApiQueries);
+// function test(params) {
+//   alert("you hit test!");
+// }
+
+// searchInputVal.addEventListener("click", runApiQueries);
+searchBtn.addEventListener("click", appendPantry);
+recipeBtn.addEventListener("click", searchRecipes);
 
 // if (ingredientList > 0) {
 //   const response = await fetch(`/api/items`, {
@@ -174,6 +240,7 @@ searchInputVal.addEventListener("input", runApiQueries);
 //     },
 //   });
 // }
+
 // var ingredients = JSON.stringify(ingredientList);
 //comma separated list of ingredients that the recipe needs to search for
 // var apiUrl = 'https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients?ingredients=' + ingredients + '&number=5&ignorePantry=true&ranking=1';
@@ -193,44 +260,44 @@ searchInputVal.addEventListener("input", runApiQueries);
 
 //FRANCISCO ^^^^^^^^^
 
-const delButtonHandler = async (event) => {
-  if (event.target.hasAttribute("data-id")) {
-    const id = event.target.getAttribute("data-id");
+// const delButtonHandler = async (event) => {
+//   if (event.target.hasAttribute("data-id")) {
+//     const id = event.target.getAttribute("data-id");
 
-    const response = await fetch(`/api/items/${id}`, {
-      method: "DELETE",
-    });
-  }
-};
-const test = (event) => {
-  //let app = document.querySelector("#app");
-  // // GET USER QUERY URL
+//     const response = await fetch(`/api/items/${id}`, {
+//       method: "DELETE",
+//     });
+//   }
+// };
+// const test = (event) => {
+//   //let app = document.querySelector("#app");
+//   // // GET USER QUERY URL
 
-  console.log("-------------");
-  console.log("-------------");
-  console.log("-------------+");
-  console.log("-------------");
-  console.log("-------------");
-  console.log("-------------");
-  console.log(this + "fafasfasf");
-  console.log(event);
-  // alert("addme");
-  // const a = await handleSearchFormSubmit(event);
-  // console.log(`ingredient url is: ${a}`);
-  // // // GET INGREDIENT SETS
-  // const ingredientList = await getData(a, SPOON_HOST);
-  // console.log(ingredientList);
-  // if (ingredientList > 0) {
-  //   const response = await fetch(`/api/items`, {
-  //     method: "POST",
-  //     body: JSON.stringify({ ingredientList }),
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-  // }
-};
+//   console.log("-------------");
+//   console.log("-------------");
+//   console.log("-------------+");
+//   console.log("-------------");
+//   console.log("-------------");
+//   console.log("-------------");
+//   console.log(this + "fafasfasf");
+//   console.log(event);
+//   // alert("addme");
+//   // const a = await handleSearchFormSubmit(event);
+//   // console.log(`ingredient url is: ${a}`);
+//   // // // GET INGREDIENT SETS
+//   // const ingredientList = await getData(a, SPOON_HOST);
+//   // console.log(ingredientList);
+//   // if (ingredientList > 0) {
+//   //   const response = await fetch(`/api/items`, {
+//   //     method: "POST",
+//   //     body: JSON.stringify({ ingredientList }),
+//   //     headers: {
+//   //       "Content-Type": "application/json",
+//   //     },
+//   //   });
+//   // }
+// };
 
 document
   .querySelector("#searchbtn")
-  .addEventListener("click", delButtonHandler);
+  // .addEventListener("click", delButtonHandler);
