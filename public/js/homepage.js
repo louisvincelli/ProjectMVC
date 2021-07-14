@@ -1,5 +1,8 @@
 var searchFormEl = document.querySelector("#search-form");
 var searchInputVal = document.querySelector(".form-input");
+var searchBtn = document.querySelector("#add-ingredient");
+var recipeBtn = document.querySelector("#searchRecipeBtn");
+var pantry = [];
 const RAPIDAPI_KEY = "b991af6626msh20817527d58c008p114012jsnafbe85f9a112";
 const intro = document.querySelector(".intro");
 const more = document.querySelector(".more");
@@ -46,7 +49,64 @@ async function handleSearchFormSubmit(event) {
   console.log(ingrdUrl);
   return ingrdUrl;
 }
-
+async function appendPantry(event) {
+  event.preventDefault();
+  // alert("handle form submit")
+  var searchInputVal = document.querySelector(".form-input").value;
+  if (!searchInputVal) {
+    console.error("You need a search input value!");
+    return;
+  }
+  console.log(`Appending (${searchInputVal}) to pantry`);
+  // Takes the search query
+  // pantry.push(searchInputVal+"%2C");
+  pantry.push(searchInputVal);
+  console.log(`Pantry items are:${pantry}`);
+  localStorage.setItem("pantry", pantry);
+  return pantry;
+}
+// SEARCH FOR RECIPES
+async function searchRecipes(event) {
+  event.preventDefault();
+  console.log("+++++");
+  let app = document.querySelector("#container");
+  // // GET USER QUERIED INGREDIENTS
+  urlString = localStorage.getItem("pantry").split("&");
+  console.log(`ingredients string is: ${urlString}`);
+  console.log("+++++");
+  RECIPE_URL =
+    "https://spoonacular-recipe-food-nutrition-v1.p.rapidapi.com/recipes/findByIngredients?ingredients=" +
+    urlString +
+    "&number=10&ignorePantry=true&ranking=1";
+  console.log(RECIPE_URL);
+  const recipesObj = await getData(RECIPE_URL, SPOON_HOST);
+  console.log(recipesObj);
+  // Erases search results after each user query below search bar
+  // app.innerHTML = "";
+  // UPDATE UI WITH INGREDIENT IMG & NAME DATA
+  recipesObj.forEach((recipe) => {
+    let img = recipe.image;
+    app.innerHTML += `
+    <div class="module pink">
+      <div class="img  col-md-4">
+        <div class="img-card">
+          <h1>${recipe.title}</h1>
+          <img class="img-size" src=${img} alt="">
+        </div>
+        <div class="recipe-info">
+          <span>${recipe.usedIngredients.name}</span><br>
+          <span>${recipe.usedIngredients.name}</span><br>
+          <span>${recipe.usedIngredients.name}</span><br>
+          <span>M%M</span><br>
+          <span>M%M</span><br>
+          <span>M%M</span><br>
+          <span>M%M</span><br>
+          <span>M%M</span><br>
+        </div>
+    </div>
+    </div>`;
+  });
+}
 const runApiQueries = async (search) => {
   let app = document.querySelector("#click-info");
   // // GET USER QUERY URL
@@ -94,7 +154,7 @@ const runApiQueries = async (search) => {
   // Erases search results after each user query below search bar
   app.innerHTML = "";
   // UPDATE UI WITH INGREDIENT IMG & NAME DATA
-  ingredientList.forEach((ingredient, index) => {
+  ingredientList.forEach((ingredient) => {
     let img =
       "https://spoonacular.com/cdn/ingredients_250x250/" + ingredient.image;
     app.innerHTML += `
@@ -105,29 +165,27 @@ const runApiQueries = async (search) => {
           <img class="img-size-search" src=${img}
             alt="Image Description style="max-width=100px"
             />
-          <form  class="form w-100">
-          <button id="${index}-${ingredient.name}" class="btn btn-outline-success" type="submit">Add</button>
-          </form>
+
           </div>
           </div>
       </div>
     `;
 
-    const items = [];
-    const addBtn = document.getElementById(`${index}-${ingredient.name}`);
-    addBtn.addEventListener("click", (event) => {
-      event.preventDefault();
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log("+++++++++++++");
-      console.log(event);
+    // const items = [];
+    // const addBtn = document.getElementById(`${index}-${ingredient.name}`);
+    // addBtn.addEventListener("click", (event) => {
+    //   event.preventDefault();
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log("+++++++++++++");
+    //   console.log(event);
 
-      test(event);
-    });
+    //   test(event);
+    // });
   });
 };
 
@@ -187,7 +245,8 @@ document.querySelector(".form").addEventListener("submit", (e) => {
 // });
 
 searchInputVal.addEventListener("input", runApiQueries);
-
+searchBtn.addEventListener("click", appendPantry);
+recipeBtn.addEventListener("click", searchRecipes);
 // if (ingredientList > 0) {
 //   const response = await fetch(`/api/items`, {
 //     method: "POST",
