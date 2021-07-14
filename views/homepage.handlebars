@@ -3,8 +3,9 @@
     </section> 
     <form id="search-form" autocomplete="off" class="d-flex">
       <div class="form-group">
-        <input id="ingredient-name" class="searchInput form-input" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
+        <input id="ingredient-name" class=" searchInput form-input" type="search" placeholder="Search" aria-label="Search">
+        <button id="searchRecipeBtn" class="btn btn-outline-success" type="submit">Search</button>
+        <button id="add-ingredient" class="btn btn-outline-success" type="submit">Add Me</button>
       </div>
     </form>
 {{!-- <div class="row">
@@ -47,19 +48,10 @@
             {{#each items}}
             {{dataValues.name}}
             {{/each}}
-          <div class="module-search  col-md-2">
-            <div class="img-search  col-md-4">
-              <div class="img-card-search">
-                <h1>Shako</h1>
-              <img class="img-size-search" src="./img/vegetable-10.jpg" alt="">
-              </div>
-          </div>
-        </div>
-
       </div>
   </div>
   <div id="intro1" class="intro1"></div>
-<div id"helper"></div>
+<div id="helper"></div>
 <div id="container">
   <div class="module pink"=>
     <div class="img  col-md-4">
@@ -69,6 +61,8 @@
   </div>
   </div>
 </div>
+
+
   <div class="module pink">
     <div class="img  col-md-4">
     <div class="img-card">
@@ -306,7 +300,7 @@
 </div>
 </div>
 
-  {{#if recipes.length}}
+  {{!-- {{#if recipes.length}}
   <div class="col-md-6 recipe-list">
     <h3>Recipes:</h3>
 
@@ -321,7 +315,7 @@
     </div>
     {{/each}}
   </div>
-  {{/if}}
+  {{/if}} --}}
 
 </div>
  <script
